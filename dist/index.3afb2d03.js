@@ -596,20 +596,77 @@ function hmrAccept(bundle /*: ParcelRequire */ , id /*: string */ ) {
 }
 
 },{}],"i6vpN":[function(require,module,exports,__globalThis) {
-async function getData() {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+var _modelJs = require("./model.js");
+var _allExtensionsViewJs = require("./Views/allExtensionsView.js");
+var _allExtensionsViewJsDefault = parcelHelpers.interopDefault(_allExtensionsViewJs);
+var _activeViewJs = require("./Views/activeView.js");
+var _activeViewJsDefault = parcelHelpers.interopDefault(_activeViewJs);
+var _inactiveViewJs = require("./Views/inactiveView.js");
+var _inactiveViewJsDefault = parcelHelpers.interopDefault(_inactiveViewJs);
+const controlAddons = async function() {
+    // const addOns= await model.getData();
+    // const allAddons=[]
+    // addOns.forEach(addon=>{
+    //     const obj={
+    //         logo:addon.logo,
+    //         description:addon.description,
+    //         isActive:addon.isActive,
+    //         name:addon.name
+    //     }
+    // allExtensionsView._render(allExtensionsView._generateMarkup(obj));
+    // })
+    // allAddons.forEach(addon=>{
+    //     allExtensionsView._render(allExtensionsView._generateMarkup(addon));
+    // })
+    const addons = await _modelJs.pluginData;
+    const mydata = JSON.parse(addons);
+    mydata.forEach((element)=>{
+        (0, _allExtensionsViewJsDefault.default)._render(element);
+    });
+};
+//load all active elements;
+const loadAllActiveAddons = async function() {
+    const addons = await _modelJs.pluginData;
+    const mydata = JSON.parse(addons);
+    mydata.forEach((element)=>{
+        console.log(element);
+        if (element.isActive) (0, _activeViewJsDefault.default)._render(element);
+    });
+};
+const loadAllInActiveAddons = async function() {
+    const addons = await _modelJs.pluginData;
+    const mydata = JSON.parse(addons);
+    mydata.forEach((element)=>{
+        console.log(element);
+        if (!element.isActive) (0, _inactiveViewJsDefault.default)._render(element);
+    });
+};
+let init = function() {
+    controlAddons();
+    (0, _activeViewJsDefault.default).addHandlerRenderActivePlugins(loadAllActiveAddons);
+    (0, _inactiveViewJsDefault.default).addHandlerRenderInActivePlugins(loadAllInActiveAddons);
+    (0, _allExtensionsViewJsDefault.default).addHandlerRenderAllPlugins(controlAddons);
+};
+init();
+
+},{"./model.js":"cS3QQ","./Views/allExtensionsView.js":"g3M6f","./Views/activeView.js":"j64Zk","./Views/inactiveView.js":"fHJUO","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"cS3QQ":[function(require,module,exports,__globalThis) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "getData", ()=>getData);
+parcelHelpers.export(exports, "pluginData", ()=>pluginData);
+let getData = async function(location) {
     try {
-        const response = await require("a4d8f3968d76c913");
-        const { ...data } = [
-            ...response
-        ];
-        console.log(data);
+        const state = [];
+        const response = await require("82bb928bc8030a49");
+        return JSON.stringify(response);
     } catch (err) {
         console.log(err);
     }
-}
-getData();
+};
+let pluginData = getData();
 
-},{"a4d8f3968d76c913":"6dth1"}],"6dth1":[function(require,module,exports,__globalThis) {
+},{"82bb928bc8030a49":"6dth1","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"6dth1":[function(require,module,exports,__globalThis) {
 module.exports = require("beac834b54c2f62")(require("2975f509ded8b6df").getBundleURL('dIpmh') + "data.66661bea.js").catch((err)=>{
     delete module.bundle.cache[module.id];
     throw err;
@@ -712,6 +769,207 @@ exports.getBundleURL = getBundleURLCached;
 exports.getBaseURL = getBaseURL;
 exports.getOrigin = getOrigin;
 
-},{}]},["d1Tca","i6vpN"], "i6vpN", "parcelRequire94c2")
+},{}],"gkKU3":[function(require,module,exports,__globalThis) {
+exports.interopDefault = function(a) {
+    return a && a.__esModule ? a : {
+        default: a
+    };
+};
+exports.defineInteropFlag = function(a) {
+    Object.defineProperty(a, '__esModule', {
+        value: true
+    });
+};
+exports.exportAll = function(source, dest) {
+    Object.keys(source).forEach(function(key) {
+        if (key === 'default' || key === '__esModule' || Object.prototype.hasOwnProperty.call(dest, key)) return;
+        Object.defineProperty(dest, key, {
+            enumerable: true,
+            get: function() {
+                return source[key];
+            }
+        });
+    });
+    return dest;
+};
+exports.export = function(dest, destName, get) {
+    Object.defineProperty(dest, destName, {
+        enumerable: true,
+        get: get
+    });
+};
+
+},{}],"g3M6f":[function(require,module,exports,__globalThis) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+var _view = require("./view");
+var _viewDefault = parcelHelpers.interopDefault(_view);
+var _logoDevlensSvg = require("url:../assets/images/logo-devlens.svg");
+var _logoDevlensSvgDefault = parcelHelpers.interopDefault(_logoDevlensSvg);
+class AllExtensionsView extends (0, _viewDefault.default) {
+    _parentEl = document.querySelector('.card-container');
+    _allPluginBtn = document.querySelector('.allBtn');
+    _img;
+    _generateMarkup(data) {
+        console.log(data.name);
+        return `<div class="card">
+      <div class="upper-section">
+        <div class="logo">
+      <img src=${this._getImage(data.name)} alt="" class="logo">
+      </div>
+      <div class="extensionInfo">
+      <h2 class="extensionName">${data.name}</h2>
+      <p class="extensionDescription">${data.description}</p>
+    </div>
+    </div>
+    <div class="lower-section">
+      <a href="" class="button">Remove</a>
+      <div class="toggle">
+        <input type="radio" name="${data.name}"  id="inactive" value="inactive" class="state">
+        <input type="radio" name="${data.name}" id="active" value="active" class="state" ${data.isActive ? 'checked' : ''}>
+        <div class="slider"></div>  
+        
+      </div>
+    </div> 
+    `;
+    }
+    addHandlerRenderAllPlugins(handler) {
+        this._allPluginBtn.addEventListener('click', (e)=>{
+            this._clear();
+            this._addActiveClass(this._allPluginBtn);
+            handler();
+        });
+    }
+}
+exports.default = new AllExtensionsView();
+
+},{"./view":"2pwRh","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","url:../assets/images/logo-devlens.svg":"grKFi"}],"2pwRh":[function(require,module,exports,__globalThis) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+var _logoConsolePlusSvg = require("url:../assets/images/logo-console-plus.svg");
+var _logoConsolePlusSvgDefault = parcelHelpers.interopDefault(_logoConsolePlusSvg);
+var _logoDevlensSvg = require("url:../assets/images/logo-devlens.svg");
+var _logoDevlensSvgDefault = parcelHelpers.interopDefault(_logoDevlensSvg);
+class View {
+    _data;
+    _btns = document.querySelectorAll('.button');
+    _imageAddress = [
+        (0, _logoConsolePlusSvgDefault.default),
+        (0, _logoDevlensSvgDefault.default)
+    ];
+    _imageMap = new Map();
+    _render(plugindata) {
+        this._data = plugindata;
+        let markup = this._generateMarkup(this._data);
+        this._parentEl.insertAdjacentHTML('afterbegin', markup);
+    }
+    _clear() {
+        this._parentEl.innerHTML = '';
+    }
+    _addActiveClass(element) {
+        this._btns.forEach((btn)=>{
+            btn.classList.remove('active');
+        });
+        element.classList.add('active');
+    }
+    _getImage(value) {
+        this._imageAddress.forEach((img)=>{
+            if (img === value) return value;
+        });
+    }
+}
+exports.default = View;
+
+},{"@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","url:../assets/images/logo-console-plus.svg":"2NTy0","url:../assets/images/logo-devlens.svg":"grKFi"}],"2NTy0":[function(require,module,exports,__globalThis) {
+module.exports = require("2a2a1cf028ad7fd5").getBundleURL('dIpmh') + "logo-console-plus.1c86b196.svg" + "?" + Date.now();
+
+},{"2a2a1cf028ad7fd5":"lgJ39"}],"grKFi":[function(require,module,exports,__globalThis) {
+module.exports = require("6a41ce6a4725b277").getBundleURL('dIpmh') + "logo-devlens.873d87d4.svg" + "?" + Date.now();
+
+},{"6a41ce6a4725b277":"lgJ39"}],"j64Zk":[function(require,module,exports,__globalThis) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+var _view = require("./view");
+var _viewDefault = parcelHelpers.interopDefault(_view);
+var _allExtensionsView = require("./allExtensionsView");
+var _allExtensionsViewDefault = parcelHelpers.interopDefault(_allExtensionsView);
+class ActiveView extends (0, _viewDefault.default) {
+    _activeBtn = document.querySelector('.activeBtn');
+    _parentEl = document.querySelector('.card-container');
+    addHandlerRenderActivePlugins(handler) {
+        this._activeBtn.addEventListener('click', (e)=>{
+            this._clear();
+            this._addActiveClass(this._activeBtn);
+            handler();
+        });
+    }
+    _generateMarkup(data) {
+        return `<div class="card">
+          <div class="upper-section">
+            <div class="logo">
+          <img src= alt="" class="logo">
+          </div>
+          <div class="extensionInfo">
+          <h2 class="extensionName">${data.name}</h2>
+          <p class="extensionDescription">${data.description}</p>
+        </div>
+        </div>
+        <div class="lower-section">
+          <a href="" class="button">Remove</a>
+          <div class="toggle">
+            <input type="radio" name="${data.name}"  id="inactive" value="inactive" class="state">
+            <input type="radio" name="${data.name}" id="active" value="active" class="state" ${data.isActive ? 'checked' : ''}>
+            <div class="slider"></div>  
+            
+          </div>
+        </div> 
+        `;
+    }
+}
+exports.default = new ActiveView();
+
+},{"./view":"2pwRh","./allExtensionsView":"g3M6f","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"fHJUO":[function(require,module,exports,__globalThis) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+var _view = require("./view");
+var _viewDefault = parcelHelpers.interopDefault(_view);
+var _allExtensionsView = require("./allExtensionsView");
+var _allExtensionsViewDefault = parcelHelpers.interopDefault(_allExtensionsView);
+class InActiveView extends (0, _viewDefault.default) {
+    _inactiveBtn = document.querySelector('.inactiveBtn');
+    _parentEl = document.querySelector('.card-container');
+    addHandlerRenderInActivePlugins(handler) {
+        this._inactiveBtn.addEventListener('click', (e)=>{
+            this._clear();
+            this._addActiveClass(this._inactiveBtn);
+            handler();
+        });
+    }
+    _generateMarkup(data) {
+        return `<div class="card">s
+          <div class="upper-section">
+            <div class="logo">
+          <img src= alt="" class="logo">
+          </div>
+          <div class="extensionInfo">
+          <h2 class="extensionName">${data.name}</h2>
+          <p class="extensionDescription">${data.description}</p>
+        </div>
+        </div>
+        <div class="lower-section">
+          <a href="" class="button">Remove</a>
+          <div class="toggle">
+            <input type="radio" name="${data.name}"  id="inactive" value="inactive" class="state">
+            <input type="radio" name="${data.name}" id="active" value="active" class="state" ${data.isActive ? 'checked' : ''}>
+            <div class="slider"></div>  
+            
+          </div>
+        </div> 
+        `;
+    }
+}
+exports.default = new InActiveView();
+
+},{"./view":"2pwRh","./allExtensionsView":"g3M6f","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}]},["d1Tca","i6vpN"], "i6vpN", "parcelRequire94c2")
 
 //# sourceMappingURL=index.3afb2d03.js.map
