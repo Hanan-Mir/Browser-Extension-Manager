@@ -604,6 +604,8 @@ var _activeViewJs = require("./Views/activeView.js");
 var _activeViewJsDefault = parcelHelpers.interopDefault(_activeViewJs);
 var _inactiveViewJs = require("./Views/inactiveView.js");
 var _inactiveViewJsDefault = parcelHelpers.interopDefault(_inactiveViewJs);
+var _removeViewJs = require("./Views/removeView.js");
+var _removeViewJsDefault = parcelHelpers.interopDefault(_removeViewJs);
 const controlAddons = async function() {
     // const addOns= await model.getData();
     // const allAddons=[]
@@ -620,26 +622,40 @@ const controlAddons = async function() {
     //     allExtensionsView._render(allExtensionsView._generateMarkup(addon));
     // })
     const addons = await _modelJs.pluginData;
+    await _modelJs.pluginMap();
     const mydata = JSON.parse(addons);
+    const pluginMap = new Map();
     mydata.forEach((element)=>{
         (0, _allExtensionsViewJsDefault.default)._render(element);
+        pluginMap.set(element.name.replace(' ', ""), element);
     });
 };
 //load all active elements;
 const loadAllActiveAddons = async function() {
-    const addons = await _modelJs.pluginData;
-    const mydata = JSON.parse(addons);
-    mydata.forEach((element)=>{
-        console.log(element);
-        if (element.isActive) (0, _activeViewJsDefault.default)._render(element);
+    const extensionList = _modelJs.plugIn;
+    extensionList.forEach((value, key)=>{
+        if (value.isActive) (0, _activeViewJsDefault.default)._render(value);
     });
 };
 const loadAllInActiveAddons = async function() {
-    const addons = await _modelJs.pluginData;
-    const mydata = JSON.parse(addons);
-    mydata.forEach((element)=>{
-        console.log(element);
-        if (!element.isActive) (0, _inactiveViewJsDefault.default)._render(element);
+    const extensionList = _modelJs.plugIn;
+    extensionList.forEach((value, key)=>{
+        if (!value.isActive) (0, _activeViewJsDefault.default)._render(value);
+    });
+};
+const removeplugin = function(removeEl, section) {
+    const extensionList = _modelJs.plugIn;
+    console.log(extensionList);
+    extensionList.delete(removeEl);
+    console.log(extensionList);
+    if (section === "allsection") extensionList.forEach((value, key)=>{
+        (0, _allExtensionsViewJsDefault.default)._render(value);
+    });
+    if (section === "activesection") extensionList.forEach((value, key)=>{
+        if (value.isActive) (0, _activeViewJsDefault.default)._render(value);
+    });
+    if (section === "inactivesection") extensionList.forEach((value, key)=>{
+        if (!value.isActive) (0, _inactiveViewJsDefault.default)._render(value);
     });
 };
 let init = function() {
@@ -647,24 +663,36 @@ let init = function() {
     (0, _activeViewJsDefault.default).addHandlerRenderActivePlugins(loadAllActiveAddons);
     (0, _inactiveViewJsDefault.default).addHandlerRenderInActivePlugins(loadAllInActiveAddons);
     (0, _allExtensionsViewJsDefault.default).addHandlerRenderAllPlugins(controlAddons);
+    (0, _removeViewJsDefault.default).addHandlerRemovePlugin(removeplugin);
 };
 init();
 
-},{"./model.js":"cS3QQ","./Views/allExtensionsView.js":"g3M6f","./Views/activeView.js":"j64Zk","./Views/inactiveView.js":"fHJUO","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"cS3QQ":[function(require,module,exports,__globalThis) {
+},{"./model.js":"cS3QQ","./Views/allExtensionsView.js":"g3M6f","./Views/activeView.js":"j64Zk","./Views/inactiveView.js":"fHJUO","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","./Views/removeView.js":"6Pv8V"}],"cS3QQ":[function(require,module,exports,__globalThis) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "getData", ()=>getData);
 parcelHelpers.export(exports, "pluginData", ()=>pluginData);
+parcelHelpers.export(exports, "plugIn", ()=>plugIn);
+parcelHelpers.export(exports, "pluginMap", ()=>pluginMap);
 let getData = async function(location) {
     try {
         const state = [];
         const response = await require("82bb928bc8030a49");
-        return JSON.stringify(response);
+        const myData = JSON.stringify(response);
+        return myData;
     } catch (err) {
         console.log(err);
     }
 };
 let pluginData = getData();
+let plugIn = new Map();
+let pluginMap = async function() {
+    const response = await require("82bb928bc8030a49");
+    response.forEach((res)=>{
+        plugIn.set(res.name.replace(' ', ""), res);
+    });
+    console.log(plugIn);
+};
 
 },{"82bb928bc8030a49":"6dth1","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"6dth1":[function(require,module,exports,__globalThis) {
 module.exports = require("beac834b54c2f62")(require("2975f509ded8b6df").getBundleURL('dIpmh') + "data.66661bea.js").catch((err)=>{
@@ -806,16 +834,58 @@ var _view = require("./view");
 var _viewDefault = parcelHelpers.interopDefault(_view);
 var _logoDevlensSvg = require("url:../assets/images/logo-devlens.svg");
 var _logoDevlensSvgDefault = parcelHelpers.interopDefault(_logoDevlensSvg);
+var _logoStyleSpySvg = require("url:../assets/images/logo-style-spy.svg");
+var _logoStyleSpySvgDefault = parcelHelpers.interopDefault(_logoStyleSpySvg);
+var _logoSpeedBoostSvg = require("url:../assets/images/logo-speed-boost.svg");
+var _logoSpeedBoostSvgDefault = parcelHelpers.interopDefault(_logoSpeedBoostSvg);
+var _logoJsonWizardSvg = require("url:../assets/images/logo-json-wizard.svg");
+var _logoJsonWizardSvgDefault = parcelHelpers.interopDefault(_logoJsonWizardSvg);
+var _logoTabMasterProSvg = require("url:../assets/images/logo-tab-master-pro.svg");
+var _logoTabMasterProSvgDefault = parcelHelpers.interopDefault(_logoTabMasterProSvg);
+var _logoViewportBuddySvg = require("url:../assets/images/logo-viewport-buddy.svg");
+var _logoViewportBuddySvgDefault = parcelHelpers.interopDefault(_logoViewportBuddySvg);
+var _logoMarkupNotesSvg = require("url:../assets/images/logo-markup-notes.svg");
+var _logoMarkupNotesSvgDefault = parcelHelpers.interopDefault(_logoMarkupNotesSvg);
+var _logoGridGuidesSvg = require("url:../assets/images/logo-grid-guides.svg");
+var _logoGridGuidesSvgDefault = parcelHelpers.interopDefault(_logoGridGuidesSvg);
+var _logoPalettePickerSvg = require("url:../assets/images/logo-palette-picker.svg");
+var _logoPalettePickerSvgDefault = parcelHelpers.interopDefault(_logoPalettePickerSvg);
+var _logoLinkCheckerSvg = require("url:../assets/images/logo-link-checker.svg");
+var _logoLinkCheckerSvgDefault = parcelHelpers.interopDefault(_logoLinkCheckerSvg);
+var _logoDomSnapshotSvg = require("url:../assets/images/logo-dom-snapshot.svg");
+var _logoDomSnapshotSvgDefault = parcelHelpers.interopDefault(_logoDomSnapshotSvg);
+var _logoConsolePlusSvg = require("url:../assets/images/logo-console-plus.svg");
+var _logoConsolePlusSvgDefault = parcelHelpers.interopDefault(_logoConsolePlusSvg);
 class AllExtensionsView extends (0, _viewDefault.default) {
     _parentEl = document.querySelector('.card-container');
     _allPluginBtn = document.querySelector('.allBtn');
-    _img;
+    _logoArray = [
+        (0, _logoDevlensSvgDefault.default),
+        (0, _logoStyleSpySvgDefault.default),
+        (0, _logoSpeedBoostSvgDefault.default),
+        (0, _logoJsonWizardSvgDefault.default),
+        (0, _logoTabMasterProSvgDefault.default),
+        (0, _logoViewportBuddySvgDefault.default),
+        (0, _logoMarkupNotesSvgDefault.default),
+        (0, _logoGridGuidesSvgDefault.default),
+        (0, _logoPalettePickerSvgDefault.default),
+        (0, _logoLinkCheckerSvgDefault.default),
+        (0, _logoDomSnapshotSvgDefault.default),
+        (0, _logoConsolePlusSvgDefault.default)
+    ];
     _generateMarkup(data) {
+        let imgAddress;
+        let mydata = data.logo.split('/');
+        let index = mydata.length;
+        let newArr = mydata[index - 1].split('.');
+        this._logoArray.forEach((logo)=>{
+            if (logo.includes(newArr[0])) imgAddress = logo;
+        });
         console.log(data.name);
         return `<div class="card">
       <div class="upper-section">
         <div class="logo">
-      <img src=${this._getImage(data.name)} alt="" class="logo">
+      <img src=${imgAddress} alt="" class="logo">
       </div>
       <div class="extensionInfo">
       <h2 class="extensionName">${data.name}</h2>
@@ -823,7 +893,7 @@ class AllExtensionsView extends (0, _viewDefault.default) {
     </div>
     </div>
     <div class="lower-section">
-      <a href="" class="button">Remove</a>
+      <a href="" class="button remove ${data.name.replace(' ', "")}">Remove</a>
       <div class="toggle">
         <input type="radio" name="${data.name}"  id="inactive" value="inactive" class="state">
         <input type="radio" name="${data.name}" id="active" value="active" class="state" ${data.isActive ? 'checked' : ''}>
@@ -843,13 +913,13 @@ class AllExtensionsView extends (0, _viewDefault.default) {
 }
 exports.default = new AllExtensionsView();
 
-},{"./view":"2pwRh","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","url:../assets/images/logo-devlens.svg":"grKFi"}],"2pwRh":[function(require,module,exports,__globalThis) {
+},{"./view":"2pwRh","url:../assets/images/logo-devlens.svg":"grKFi","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","url:../assets/images/logo-style-spy.svg":"j48yO","url:../assets/images/logo-speed-boost.svg":"dOqtc","url:../assets/images/logo-json-wizard.svg":"id1Ll","url:../assets/images/logo-tab-master-pro.svg":"6oWYJ","url:../assets/images/logo-markup-notes.svg":"hSvAl","url:../assets/images/logo-grid-guides.svg":"8H9n1","url:../assets/images/logo-link-checker.svg":"9tYyJ","url:../assets/images/logo-dom-snapshot.svg":"1FQ22","url:../assets/images/logo-console-plus.svg":"2NTy0","url:../assets/images/logo-palette-picker.svg":"gEZ1R","url:../assets/images/logo-viewport-buddy.svg":"2tcTU"}],"2pwRh":[function(require,module,exports,__globalThis) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
-var _logoConsolePlusSvg = require("url:../assets/images/logo-console-plus.svg");
-var _logoConsolePlusSvgDefault = parcelHelpers.interopDefault(_logoConsolePlusSvg);
 var _logoDevlensSvg = require("url:../assets/images/logo-devlens.svg");
 var _logoDevlensSvgDefault = parcelHelpers.interopDefault(_logoDevlensSvg);
+var _logoConsolePlusSvg = require("url:../assets/images/logo-console-plus.svg");
+var _logoConsolePlusSvgDefault = parcelHelpers.interopDefault(_logoConsolePlusSvg);
 class View {
     _data;
     _btns = document.querySelectorAll('.button');
@@ -880,22 +950,90 @@ class View {
 }
 exports.default = View;
 
-},{"@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","url:../assets/images/logo-console-plus.svg":"2NTy0","url:../assets/images/logo-devlens.svg":"grKFi"}],"2NTy0":[function(require,module,exports,__globalThis) {
-module.exports = require("2a2a1cf028ad7fd5").getBundleURL('dIpmh') + "logo-console-plus.1c86b196.svg" + "?" + Date.now();
-
-},{"2a2a1cf028ad7fd5":"lgJ39"}],"grKFi":[function(require,module,exports,__globalThis) {
+},{"url:../assets/images/logo-devlens.svg":"grKFi","url:../assets/images/logo-console-plus.svg":"2NTy0","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"grKFi":[function(require,module,exports,__globalThis) {
 module.exports = require("6a41ce6a4725b277").getBundleURL('dIpmh') + "logo-devlens.873d87d4.svg" + "?" + Date.now();
 
-},{"6a41ce6a4725b277":"lgJ39"}],"j64Zk":[function(require,module,exports,__globalThis) {
+},{"6a41ce6a4725b277":"lgJ39"}],"2NTy0":[function(require,module,exports,__globalThis) {
+module.exports = require("2a2a1cf028ad7fd5").getBundleURL('dIpmh') + "logo-console-plus.1c86b196.svg" + "?" + Date.now();
+
+},{"2a2a1cf028ad7fd5":"lgJ39"}],"j48yO":[function(require,module,exports,__globalThis) {
+module.exports = require("be51dc7c4bd45f6").getBundleURL('dIpmh') + "logo-style-spy.b448a0b5.svg" + "?" + Date.now();
+
+},{"be51dc7c4bd45f6":"lgJ39"}],"dOqtc":[function(require,module,exports,__globalThis) {
+module.exports = require("3d1bd4224d2cdbf2").getBundleURL('dIpmh') + "logo-speed-boost.82a0be0e.svg" + "?" + Date.now();
+
+},{"3d1bd4224d2cdbf2":"lgJ39"}],"id1Ll":[function(require,module,exports,__globalThis) {
+module.exports = require("c16a6c0fd1eef362").getBundleURL('dIpmh') + "logo-json-wizard.d1117365.svg" + "?" + Date.now();
+
+},{"c16a6c0fd1eef362":"lgJ39"}],"6oWYJ":[function(require,module,exports,__globalThis) {
+module.exports = require("eb3e34c7dceb39a6").getBundleURL('dIpmh') + "logo-tab-master-pro.2ce395f9.svg" + "?" + Date.now();
+
+},{"eb3e34c7dceb39a6":"lgJ39"}],"hSvAl":[function(require,module,exports,__globalThis) {
+module.exports = require("deab160b147dcb9f").getBundleURL('dIpmh') + "logo-markup-notes.e923ca50.svg" + "?" + Date.now();
+
+},{"deab160b147dcb9f":"lgJ39"}],"8H9n1":[function(require,module,exports,__globalThis) {
+module.exports = require("428e2392c754986").getBundleURL('dIpmh') + "logo-grid-guides.1bd49138.svg" + "?" + Date.now();
+
+},{"428e2392c754986":"lgJ39"}],"9tYyJ":[function(require,module,exports,__globalThis) {
+module.exports = require("375eb530f34bf4d5").getBundleURL('dIpmh') + "logo-link-checker.2a42671a.svg" + "?" + Date.now();
+
+},{"375eb530f34bf4d5":"lgJ39"}],"1FQ22":[function(require,module,exports,__globalThis) {
+module.exports = require("c6d0c39dc38a386f").getBundleURL('dIpmh') + "logo-dom-snapshot.f2d4e009.svg" + "?" + Date.now();
+
+},{"c6d0c39dc38a386f":"lgJ39"}],"gEZ1R":[function(require,module,exports,__globalThis) {
+module.exports = require("75c5f3ebf4f47667").getBundleURL('dIpmh') + "logo-palette-picker.28417005.svg" + "?" + Date.now();
+
+},{"75c5f3ebf4f47667":"lgJ39"}],"2tcTU":[function(require,module,exports,__globalThis) {
+module.exports = require("27e33fbe1386aa62").getBundleURL('dIpmh') + "logo-viewport-buddy.fae7c0e8.svg" + "?" + Date.now();
+
+},{"27e33fbe1386aa62":"lgJ39"}],"j64Zk":[function(require,module,exports,__globalThis) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 var _view = require("./view");
 var _viewDefault = parcelHelpers.interopDefault(_view);
 var _allExtensionsView = require("./allExtensionsView");
 var _allExtensionsViewDefault = parcelHelpers.interopDefault(_allExtensionsView);
+var _logoDevlensSvg = require("url:../assets/images/logo-devlens.svg");
+var _logoDevlensSvgDefault = parcelHelpers.interopDefault(_logoDevlensSvg);
+var _logoStyleSpySvg = require("url:../assets/images/logo-style-spy.svg");
+var _logoStyleSpySvgDefault = parcelHelpers.interopDefault(_logoStyleSpySvg);
+var _logoSpeedBoostSvg = require("url:../assets/images/logo-speed-boost.svg");
+var _logoSpeedBoostSvgDefault = parcelHelpers.interopDefault(_logoSpeedBoostSvg);
+var _logoJsonWizardSvg = require("url:../assets/images/logo-json-wizard.svg");
+var _logoJsonWizardSvgDefault = parcelHelpers.interopDefault(_logoJsonWizardSvg);
+var _logoTabMasterProSvg = require("url:../assets/images/logo-tab-master-pro.svg");
+var _logoTabMasterProSvgDefault = parcelHelpers.interopDefault(_logoTabMasterProSvg);
+var _logoViewportBuddySvg = require("url:../assets/images/logo-viewport-buddy.svg");
+var _logoViewportBuddySvgDefault = parcelHelpers.interopDefault(_logoViewportBuddySvg);
+var _logoMarkupNotesSvg = require("url:../assets/images/logo-markup-notes.svg");
+var _logoMarkupNotesSvgDefault = parcelHelpers.interopDefault(_logoMarkupNotesSvg);
+var _logoGridGuidesSvg = require("url:../assets/images/logo-grid-guides.svg");
+var _logoGridGuidesSvgDefault = parcelHelpers.interopDefault(_logoGridGuidesSvg);
+var _logoPalettePickerSvg = require("url:../assets/images/logo-palette-picker.svg");
+var _logoPalettePickerSvgDefault = parcelHelpers.interopDefault(_logoPalettePickerSvg);
+var _logoLinkCheckerSvg = require("url:../assets/images/logo-link-checker.svg");
+var _logoLinkCheckerSvgDefault = parcelHelpers.interopDefault(_logoLinkCheckerSvg);
+var _logoDomSnapshotSvg = require("url:../assets/images/logo-dom-snapshot.svg");
+var _logoDomSnapshotSvgDefault = parcelHelpers.interopDefault(_logoDomSnapshotSvg);
+var _logoConsolePlusSvg = require("url:../assets/images/logo-console-plus.svg");
+var _logoConsolePlusSvgDefault = parcelHelpers.interopDefault(_logoConsolePlusSvg);
 class ActiveView extends (0, _viewDefault.default) {
     _activeBtn = document.querySelector('.activeBtn');
     _parentEl = document.querySelector('.card-container');
+    _logoArray = [
+        (0, _logoDevlensSvgDefault.default),
+        (0, _logoStyleSpySvgDefault.default),
+        (0, _logoSpeedBoostSvgDefault.default),
+        (0, _logoJsonWizardSvgDefault.default),
+        (0, _logoTabMasterProSvgDefault.default),
+        (0, _logoViewportBuddySvgDefault.default),
+        (0, _logoMarkupNotesSvgDefault.default),
+        (0, _logoGridGuidesSvgDefault.default),
+        (0, _logoPalettePickerSvgDefault.default),
+        (0, _logoLinkCheckerSvgDefault.default),
+        (0, _logoDomSnapshotSvgDefault.default),
+        (0, _logoConsolePlusSvgDefault.default)
+    ];
     addHandlerRenderActivePlugins(handler) {
         this._activeBtn.addEventListener('click', (e)=>{
             this._clear();
@@ -904,10 +1042,17 @@ class ActiveView extends (0, _viewDefault.default) {
         });
     }
     _generateMarkup(data) {
+        let imgAddress;
+        let mydata = data.logo.split('/');
+        let index = mydata.length;
+        let newArr = mydata[index - 1].split('.');
+        this._logoArray.forEach((logo)=>{
+            if (logo.includes(newArr[0])) imgAddress = logo;
+        });
         return `<div class="card">
           <div class="upper-section">
             <div class="logo">
-          <img src= alt="" class="logo">
+          <img src=${imgAddress} alt="" class="logo">
           </div>
           <div class="extensionInfo">
           <h2 class="extensionName">${data.name}</h2>
@@ -915,7 +1060,7 @@ class ActiveView extends (0, _viewDefault.default) {
         </div>
         </div>
         <div class="lower-section">
-          <a href="" class="button">Remove</a>
+          <a href="" class="button remove ${data.name.replace(' ', "")}">Remove</a>
           <div class="toggle">
             <input type="radio" name="${data.name}"  id="inactive" value="inactive" class="state">
             <input type="radio" name="${data.name}" id="active" value="active" class="state" ${data.isActive ? 'checked' : ''}>
@@ -928,13 +1073,37 @@ class ActiveView extends (0, _viewDefault.default) {
 }
 exports.default = new ActiveView();
 
-},{"./view":"2pwRh","./allExtensionsView":"g3M6f","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"fHJUO":[function(require,module,exports,__globalThis) {
+},{"./view":"2pwRh","./allExtensionsView":"g3M6f","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","url:../assets/images/logo-devlens.svg":"grKFi","url:../assets/images/logo-style-spy.svg":"j48yO","url:../assets/images/logo-speed-boost.svg":"dOqtc","url:../assets/images/logo-json-wizard.svg":"id1Ll","url:../assets/images/logo-tab-master-pro.svg":"6oWYJ","url:../assets/images/logo-viewport-buddy.svg":"2tcTU","url:../assets/images/logo-markup-notes.svg":"hSvAl","url:../assets/images/logo-grid-guides.svg":"8H9n1","url:../assets/images/logo-palette-picker.svg":"gEZ1R","url:../assets/images/logo-link-checker.svg":"9tYyJ","url:../assets/images/logo-dom-snapshot.svg":"1FQ22","url:../assets/images/logo-console-plus.svg":"2NTy0"}],"fHJUO":[function(require,module,exports,__globalThis) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 var _view = require("./view");
 var _viewDefault = parcelHelpers.interopDefault(_view);
 var _allExtensionsView = require("./allExtensionsView");
 var _allExtensionsViewDefault = parcelHelpers.interopDefault(_allExtensionsView);
+var _logoDevlensSvg = require("url:../assets/images/logo-devlens.svg");
+var _logoDevlensSvgDefault = parcelHelpers.interopDefault(_logoDevlensSvg);
+var _logoStyleSpySvg = require("url:../assets/images/logo-style-spy.svg");
+var _logoStyleSpySvgDefault = parcelHelpers.interopDefault(_logoStyleSpySvg);
+var _logoSpeedBoostSvg = require("url:../assets/images/logo-speed-boost.svg");
+var _logoSpeedBoostSvgDefault = parcelHelpers.interopDefault(_logoSpeedBoostSvg);
+var _logoJsonWizardSvg = require("url:../assets/images/logo-json-wizard.svg");
+var _logoJsonWizardSvgDefault = parcelHelpers.interopDefault(_logoJsonWizardSvg);
+var _logoTabMasterProSvg = require("url:../assets/images/logo-tab-master-pro.svg");
+var _logoTabMasterProSvgDefault = parcelHelpers.interopDefault(_logoTabMasterProSvg);
+var _logoViewportBuddySvg = require("url:../assets/images/logo-viewport-buddy.svg");
+var _logoViewportBuddySvgDefault = parcelHelpers.interopDefault(_logoViewportBuddySvg);
+var _logoMarkupNotesSvg = require("url:../assets/images/logo-markup-notes.svg");
+var _logoMarkupNotesSvgDefault = parcelHelpers.interopDefault(_logoMarkupNotesSvg);
+var _logoGridGuidesSvg = require("url:../assets/images/logo-grid-guides.svg");
+var _logoGridGuidesSvgDefault = parcelHelpers.interopDefault(_logoGridGuidesSvg);
+var _logoPalettePickerSvg = require("url:../assets/images/logo-palette-picker.svg");
+var _logoPalettePickerSvgDefault = parcelHelpers.interopDefault(_logoPalettePickerSvg);
+var _logoLinkCheckerSvg = require("url:../assets/images/logo-link-checker.svg");
+var _logoLinkCheckerSvgDefault = parcelHelpers.interopDefault(_logoLinkCheckerSvg);
+var _logoDomSnapshotSvg = require("url:../assets/images/logo-dom-snapshot.svg");
+var _logoDomSnapshotSvgDefault = parcelHelpers.interopDefault(_logoDomSnapshotSvg);
+var _logoConsolePlusSvg = require("url:../assets/images/logo-console-plus.svg");
+var _logoConsolePlusSvgDefault = parcelHelpers.interopDefault(_logoConsolePlusSvg);
 class InActiveView extends (0, _viewDefault.default) {
     _inactiveBtn = document.querySelector('.inactiveBtn');
     _parentEl = document.querySelector('.card-container');
@@ -946,10 +1115,17 @@ class InActiveView extends (0, _viewDefault.default) {
         });
     }
     _generateMarkup(data) {
+        let imgAddress;
+        let mydata = data.logo.split('/');
+        let index = mydata.length;
+        let newArr = mydata[index - 1].split('.');
+        (0, _allExtensionsViewDefault.default)._logoArray.forEach((logo)=>{
+            if (logo.includes(newArr[0])) imgAddress = logo;
+        });
         return `<div class="card">s
           <div class="upper-section">
             <div class="logo">
-          <img src= alt="" class="logo">
+          <img src=${imgAddress} alt="" class="logo">
           </div>
           <div class="extensionInfo">
           <h2 class="extensionName">${data.name}</h2>
@@ -957,7 +1133,7 @@ class InActiveView extends (0, _viewDefault.default) {
         </div>
         </div>
         <div class="lower-section">
-          <a href="" class="button">Remove</a>
+          <a href="" class="button remove ${data.name.replace(' ', "")}">Remove</a>
           <div class="toggle">
             <input type="radio" name="${data.name}"  id="inactive" value="inactive" class="state">
             <input type="radio" name="${data.name}" id="active" value="active" class="state" ${data.isActive ? 'checked' : ''}>
@@ -970,6 +1146,39 @@ class InActiveView extends (0, _viewDefault.default) {
 }
 exports.default = new InActiveView();
 
-},{"./view":"2pwRh","./allExtensionsView":"g3M6f","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}]},["d1Tca","i6vpN"], "i6vpN", "parcelRequire94c2")
+},{"./view":"2pwRh","./allExtensionsView":"g3M6f","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","url:../assets/images/logo-devlens.svg":"grKFi","url:../assets/images/logo-style-spy.svg":"j48yO","url:../assets/images/logo-speed-boost.svg":"dOqtc","url:../assets/images/logo-json-wizard.svg":"id1Ll","url:../assets/images/logo-tab-master-pro.svg":"6oWYJ","url:../assets/images/logo-viewport-buddy.svg":"2tcTU","url:../assets/images/logo-markup-notes.svg":"hSvAl","url:../assets/images/logo-grid-guides.svg":"8H9n1","url:../assets/images/logo-palette-picker.svg":"gEZ1R","url:../assets/images/logo-link-checker.svg":"9tYyJ","url:../assets/images/logo-dom-snapshot.svg":"1FQ22","url:../assets/images/logo-console-plus.svg":"2NTy0"}],"6Pv8V":[function(require,module,exports,__globalThis) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+var _view = require("./view");
+var _viewDefault = parcelHelpers.interopDefault(_view);
+var _activeView = require("./activeView");
+var _activeViewDefault = parcelHelpers.interopDefault(_activeView);
+var _allExtensionsView = require("./allExtensionsView");
+var _allExtensionsViewDefault = parcelHelpers.interopDefault(_allExtensionsView);
+var _inactiveView = require("./inactiveView");
+var _inactiveViewDefault = parcelHelpers.interopDefault(_inactiveView);
+class RemoveView extends (0, _viewDefault.default) {
+    _parentEl = document.querySelector('.card-container');
+    addHandlerRemovePlugin(handler) {
+        this._parentEl.addEventListener('click', (e)=>{
+            e.preventDefault();
+            if (e.target.classList.contains('remove') && (0, _allExtensionsViewDefault.default)._allPluginBtn.classList.contains('active')) {
+                this._clear();
+                handler(e.target.classList[2], "allsection");
+            }
+            if (e.target.classList.contains('remove') && (0, _activeViewDefault.default)._activeBtn.classList.contains('active')) {
+                this._clear();
+                handler(e.target.classList[2], "activesection");
+            }
+            if (e.target.classList.contains('remove') && (0, _inactiveViewDefault.default)._inactiveBtn.classList.contains('active')) {
+                this._clear();
+                handler(e.target.classList[2], "inactivesection");
+            }
+        });
+    }
+}
+exports.default = new RemoveView();
+
+},{"./view":"2pwRh","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","./allExtensionsView":"g3M6f","./activeView":"j64Zk","./inactiveView":"fHJUO"}]},["d1Tca","i6vpN"], "i6vpN", "parcelRequire94c2")
 
 //# sourceMappingURL=index.3afb2d03.js.map

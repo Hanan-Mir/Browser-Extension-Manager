@@ -1,4 +1,3 @@
-import consolelogo from "url:../assets/images/logo-console-plus.svg";
 import DevLens from "url:../assets/images/logo-devlens.svg";
 import ConsolePlus from "url:../assets/images/logo-console-plus.svg";
 export default class View{
