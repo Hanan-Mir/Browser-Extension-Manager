@@ -1,6 +1,5 @@
 export let getData=async function(location){
     try{
-        const state=[];
         const response=await import('./data.json');
         const myData=JSON.stringify(response);
         return myData;
@@ -17,4 +16,11 @@ export let pluginMap=async function(){
             plugIn.set(res.name.replace(' ',""),res)
         })
         console.log(plugIn);
+}
+export let state;
+export let setState=function(data){
+    state=data;
+}
+export let getState=function(){
+    return state;
 }

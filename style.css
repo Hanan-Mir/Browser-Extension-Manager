@@ -136,8 +136,10 @@ transition: 0.3s;
   z-index: 2;
 }
 .active{
-    background-color: var(--red-400);
+    /* background-color: var(--red-400); */
+background-color: blue;
     color: black;
+    z-index: 3;
 }
 .logo-container img:nth-child(2):hover{
 background-color: var(--neutral--900);
@@ -178,4 +180,7 @@ cursor: pointer;
 .lower-section .button:hover{
     background-color: var(--red-700);
     color: black;
+}
+.moon:hover{
+background-color: grey;
 }

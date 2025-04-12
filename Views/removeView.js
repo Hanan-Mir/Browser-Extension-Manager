@@ -6,9 +6,9 @@ class RemoveView extends View{
     _parentEl=document.querySelector('.card-container');
 addHandlerRemovePlugin(handler){
     this._parentEl.addEventListener('click',(e)=>{
-        e.preventDefault();
 if(e.target.classList.contains('remove') && allExtensionsView._allPluginBtn.classList.contains('active')){
     this._clear();
+    // e.preventDefault();
     handler(e.target.classList[2],"allsection");
 }
 if(e.target.classList.contains('remove') && activeView._activeBtn.classList.contains('active')){
@@ -17,9 +17,8 @@ if(e.target.classList.contains('remove') && activeView._activeBtn.classList.cont
 }
 if(e.target.classList.contains('remove') && inactiveView._inactiveBtn.classList.contains('active')){
     this._clear();
-    handler(e.target.classList[2],"inactivesection")
+    handler(e.target.classList[2],"inactivesection");
 }
-
     }
 
 )

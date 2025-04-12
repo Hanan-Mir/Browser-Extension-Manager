@@ -15,6 +15,7 @@ import consolePlus from 'url:../assets/images/logo-console-plus.svg';
 class AllExtensionsView extends View{
 _parentEl=document.querySelector('.card-container');
 _allPluginBtn=document.querySelector('.allBtn');
+_radioBtn=document.querySelectorAll('.state');
 _logoArray=[DevLens,StyleSpy,SpeedBoost,JSONWizard,TabMaster,ViewportBuddy,MarkUpNotes,GridGuides,palettePicker,linkchecker,DOMSnapshot,consolePlus];
 _generateMarkup(data){
   let imgAddress;
@@ -26,9 +27,6 @@ _generateMarkup(data){
       imgAddress=logo;
     }
   })
- 
-  
-  console.log(data.name);
 return `<div class="card">
       <div class="upper-section">
         <div class="logo">
@@ -40,7 +38,7 @@ return `<div class="card">
     </div>
     </div>
     <div class="lower-section">
-      <a href="" class="button remove ${data.name.replace(' ',"")}">Remove</a>
+    <button class="button remove ${data.name.replace(' ',"")}">Remove</button>
       <div class="toggle">
         <input type="radio" name="${data.name}"  id="inactive" value="inactive" class="state">
         <input type="radio" name="${data.name}" id="active" value="active" class="state" ${data.isActive?'checked':''}>
@@ -52,10 +50,23 @@ return `<div class="card">
   }
   addHandlerRenderAllPlugins(handler){
     this._allPluginBtn.addEventListener('click',(e)=>{
+    console.log("all clicked");
         this._clear();
         this._addActiveClass(this._allPluginBtn);
         handler();
     })
 }
+addHandlerTogglePlugins(handler){
+  this._parentEl.addEventListener('click',(e)=>{
+    if(e.target.classList.contains('state')){
+      handler(e.target.getAttribute('name'));
+    }
+
+
+
+  })
+}
+
+
 }
 export default new AllExtensionsView();

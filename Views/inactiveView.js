@@ -44,7 +44,7 @@ _generateMarkup(data){
         </div>
         </div>
         <div class="lower-section">
-          <a href="" class="button remove ${data.name.replace(' ',"")}">Remove</a>
+        <button class="button remove ${data.name.replace(' ',"")}">Remove</button>
           <div class="toggle">
             <input type="radio" name="${data.name}"  id="inactive" value="inactive" class="state">
             <input type="radio" name="${data.name}" id="active" value="active" class="state" ${data.isActive?'checked':''}>

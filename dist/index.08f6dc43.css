@@ -155,8 +155,9 @@ header {
 }
 
 .active {
-  background-color: var(--red-400);
   color: #000;
+  z-index: 3;
+  background-color: #00f;
 }
 
 .logo-container img:nth-child(2):hover {
@@ -203,5 +204,9 @@ header {
 .lower-section .button:hover {
   background-color: var(--red-700);
   color: #000;
+}
+
+.moon:hover {
+  background-color: gray;
 }
 /*# sourceMappingURL=index.08f6dc43.css.map */

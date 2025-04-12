@@ -606,21 +606,9 @@ var _inactiveViewJs = require("./Views/inactiveView.js");
 var _inactiveViewJsDefault = parcelHelpers.interopDefault(_inactiveViewJs);
 var _removeViewJs = require("./Views/removeView.js");
 var _removeViewJsDefault = parcelHelpers.interopDefault(_removeViewJs);
+var _colorThemeViewJs = require("./Views/colorThemeView.js");
+var _colorThemeViewJsDefault = parcelHelpers.interopDefault(_colorThemeViewJs);
 const controlAddons = async function() {
-    // const addOns= await model.getData();
-    // const allAddons=[]
-    // addOns.forEach(addon=>{
-    //     const obj={
-    //         logo:addon.logo,
-    //         description:addon.description,
-    //         isActive:addon.isActive,
-    //         name:addon.name
-    //     }
-    // allExtensionsView._render(allExtensionsView._generateMarkup(obj));
-    // })
-    // allAddons.forEach(addon=>{
-    //     allExtensionsView._render(allExtensionsView._generateMarkup(addon));
-    // })
     const addons = await _modelJs.pluginData;
     await _modelJs.pluginMap();
     const mydata = JSON.parse(addons);
@@ -631,26 +619,27 @@ const controlAddons = async function() {
     });
 };
 //load all active elements;
-const loadAllActiveAddons = async function() {
+const loadAllActiveAddons = function() {
     const extensionList = _modelJs.plugIn;
     extensionList.forEach((value, key)=>{
         if (value.isActive) (0, _activeViewJsDefault.default)._render(value);
     });
 };
-const loadAllInActiveAddons = async function() {
-    const extensionList = _modelJs.plugIn;
-    extensionList.forEach((value, key)=>{
-        if (!value.isActive) (0, _activeViewJsDefault.default)._render(value);
+const loadAllInActiveAddons = function() {
+    const allPlugin = _modelJs.plugIn;
+    allPlugin.forEach((value, key)=>{
+        if (!value.isActive) (0, _inactiveViewJsDefault.default)._render(value);
     });
 };
 const removeplugin = function(removeEl, section) {
     const extensionList = _modelJs.plugIn;
-    console.log(extensionList);
     extensionList.delete(removeEl);
-    console.log(extensionList);
-    if (section === "allsection") extensionList.forEach((value, key)=>{
-        (0, _allExtensionsViewJsDefault.default)._render(value);
-    });
+    if (section === "allsection") {
+        _modelJs.setState(extensionList);
+        extensionList.forEach((value, key)=>{
+            (0, _allExtensionsViewJsDefault.default)._render(value);
+        });
+    }
     if (section === "activesection") extensionList.forEach((value, key)=>{
         if (value.isActive) (0, _activeViewJsDefault.default)._render(value);
     });
@@ -658,25 +647,38 @@ const removeplugin = function(removeEl, section) {
         if (!value.isActive) (0, _inactiveViewJsDefault.default)._render(value);
     });
 };
+const controlToggle = function(value) {
+    const allPlugin = _modelJs.plugIn;
+    const item = value.replace(' ', "");
+    let currentPlugin = allPlugin.get(item);
+    console.log(currentPlugin);
+    if (currentPlugin.isActive) currentPlugin.isActive = false;
+    else currentPlugin.isActive = true;
+    console.log(currentPlugin);
+};
 let init = function() {
     controlAddons();
     (0, _activeViewJsDefault.default).addHandlerRenderActivePlugins(loadAllActiveAddons);
     (0, _inactiveViewJsDefault.default).addHandlerRenderInActivePlugins(loadAllInActiveAddons);
     (0, _allExtensionsViewJsDefault.default).addHandlerRenderAllPlugins(controlAddons);
     (0, _removeViewJsDefault.default).addHandlerRemovePlugin(removeplugin);
+    (0, _allExtensionsViewJsDefault.default).addHandlerTogglePlugins(controlToggle);
+    (0, _colorThemeViewJsDefault.default).addHandlerClickSunEl();
 };
 init();
 
-},{"./model.js":"cS3QQ","./Views/allExtensionsView.js":"g3M6f","./Views/activeView.js":"j64Zk","./Views/inactiveView.js":"fHJUO","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","./Views/removeView.js":"6Pv8V"}],"cS3QQ":[function(require,module,exports,__globalThis) {
+},{"./model.js":"cS3QQ","./Views/allExtensionsView.js":"g3M6f","./Views/activeView.js":"j64Zk","./Views/inactiveView.js":"fHJUO","./Views/removeView.js":"6Pv8V","./Views/colorThemeView.js":"9Xiu4","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"cS3QQ":[function(require,module,exports,__globalThis) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "getData", ()=>getData);
 parcelHelpers.export(exports, "pluginData", ()=>pluginData);
 parcelHelpers.export(exports, "plugIn", ()=>plugIn);
 parcelHelpers.export(exports, "pluginMap", ()=>pluginMap);
+parcelHelpers.export(exports, "state", ()=>state);
+parcelHelpers.export(exports, "setState", ()=>setState);
+parcelHelpers.export(exports, "getState", ()=>getState);
 let getData = async function(location) {
     try {
-        const state = [];
         const response = await require("82bb928bc8030a49");
         const myData = JSON.stringify(response);
         return myData;
@@ -692,6 +694,13 @@ let pluginMap = async function() {
         plugIn.set(res.name.replace(' ', ""), res);
     });
     console.log(plugIn);
+};
+let state;
+let setState = function(data) {
+    state = data;
+};
+let getState = function() {
+    return state;
 };
 
 },{"82bb928bc8030a49":"6dth1","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"6dth1":[function(require,module,exports,__globalThis) {
@@ -859,6 +868,7 @@ var _logoConsolePlusSvgDefault = parcelHelpers.interopDefault(_logoConsolePlusSv
 class AllExtensionsView extends (0, _viewDefault.default) {
     _parentEl = document.querySelector('.card-container');
     _allPluginBtn = document.querySelector('.allBtn');
+    _radioBtn = document.querySelectorAll('.state');
     _logoArray = [
         (0, _logoDevlensSvgDefault.default),
         (0, _logoStyleSpySvgDefault.default),
@@ -881,7 +891,6 @@ class AllExtensionsView extends (0, _viewDefault.default) {
         this._logoArray.forEach((logo)=>{
             if (logo.includes(newArr[0])) imgAddress = logo;
         });
-        console.log(data.name);
         return `<div class="card">
       <div class="upper-section">
         <div class="logo">
@@ -893,7 +902,7 @@ class AllExtensionsView extends (0, _viewDefault.default) {
     </div>
     </div>
     <div class="lower-section">
-      <a href="" class="button remove ${data.name.replace(' ', "")}">Remove</a>
+    <button class="button remove ${data.name.replace(' ', "")}">Remove</button>
       <div class="toggle">
         <input type="radio" name="${data.name}"  id="inactive" value="inactive" class="state">
         <input type="radio" name="${data.name}" id="active" value="active" class="state" ${data.isActive ? 'checked' : ''}>
@@ -905,15 +914,21 @@ class AllExtensionsView extends (0, _viewDefault.default) {
     }
     addHandlerRenderAllPlugins(handler) {
         this._allPluginBtn.addEventListener('click', (e)=>{
+            console.log("all clicked");
             this._clear();
             this._addActiveClass(this._allPluginBtn);
             handler();
         });
     }
+    addHandlerTogglePlugins(handler) {
+        this._parentEl.addEventListener('click', (e)=>{
+            if (e.target.classList.contains('state')) handler(e.target.getAttribute('name'));
+        });
+    }
 }
 exports.default = new AllExtensionsView();
 
-},{"./view":"2pwRh","url:../assets/images/logo-devlens.svg":"grKFi","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","url:../assets/images/logo-style-spy.svg":"j48yO","url:../assets/images/logo-speed-boost.svg":"dOqtc","url:../assets/images/logo-json-wizard.svg":"id1Ll","url:../assets/images/logo-tab-master-pro.svg":"6oWYJ","url:../assets/images/logo-markup-notes.svg":"hSvAl","url:../assets/images/logo-grid-guides.svg":"8H9n1","url:../assets/images/logo-link-checker.svg":"9tYyJ","url:../assets/images/logo-dom-snapshot.svg":"1FQ22","url:../assets/images/logo-console-plus.svg":"2NTy0","url:../assets/images/logo-palette-picker.svg":"gEZ1R","url:../assets/images/logo-viewport-buddy.svg":"2tcTU"}],"2pwRh":[function(require,module,exports,__globalThis) {
+},{"./view":"2pwRh","url:../assets/images/logo-devlens.svg":"grKFi","url:../assets/images/logo-style-spy.svg":"j48yO","url:../assets/images/logo-speed-boost.svg":"dOqtc","url:../assets/images/logo-json-wizard.svg":"id1Ll","url:../assets/images/logo-tab-master-pro.svg":"6oWYJ","url:../assets/images/logo-viewport-buddy.svg":"2tcTU","url:../assets/images/logo-markup-notes.svg":"hSvAl","url:../assets/images/logo-grid-guides.svg":"8H9n1","url:../assets/images/logo-palette-picker.svg":"gEZ1R","url:../assets/images/logo-link-checker.svg":"9tYyJ","url:../assets/images/logo-dom-snapshot.svg":"1FQ22","url:../assets/images/logo-console-plus.svg":"2NTy0","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"2pwRh":[function(require,module,exports,__globalThis) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 var _logoDevlensSvg = require("url:../assets/images/logo-devlens.svg");
@@ -923,10 +938,6 @@ var _logoConsolePlusSvgDefault = parcelHelpers.interopDefault(_logoConsolePlusSv
 class View {
     _data;
     _btns = document.querySelectorAll('.button');
-    _imageAddress = [
-        (0, _logoConsolePlusSvgDefault.default),
-        (0, _logoDevlensSvgDefault.default)
-    ];
     _imageMap = new Map();
     _render(plugindata) {
         this._data = plugindata;
@@ -968,25 +979,25 @@ module.exports = require("c16a6c0fd1eef362").getBundleURL('dIpmh') + "logo-json-
 },{"c16a6c0fd1eef362":"lgJ39"}],"6oWYJ":[function(require,module,exports,__globalThis) {
 module.exports = require("eb3e34c7dceb39a6").getBundleURL('dIpmh') + "logo-tab-master-pro.2ce395f9.svg" + "?" + Date.now();
 
-},{"eb3e34c7dceb39a6":"lgJ39"}],"hSvAl":[function(require,module,exports,__globalThis) {
+},{"eb3e34c7dceb39a6":"lgJ39"}],"2tcTU":[function(require,module,exports,__globalThis) {
+module.exports = require("27e33fbe1386aa62").getBundleURL('dIpmh') + "logo-viewport-buddy.fae7c0e8.svg" + "?" + Date.now();
+
+},{"27e33fbe1386aa62":"lgJ39"}],"hSvAl":[function(require,module,exports,__globalThis) {
 module.exports = require("deab160b147dcb9f").getBundleURL('dIpmh') + "logo-markup-notes.e923ca50.svg" + "?" + Date.now();
 
 },{"deab160b147dcb9f":"lgJ39"}],"8H9n1":[function(require,module,exports,__globalThis) {
 module.exports = require("428e2392c754986").getBundleURL('dIpmh') + "logo-grid-guides.1bd49138.svg" + "?" + Date.now();
 
-},{"428e2392c754986":"lgJ39"}],"9tYyJ":[function(require,module,exports,__globalThis) {
+},{"428e2392c754986":"lgJ39"}],"gEZ1R":[function(require,module,exports,__globalThis) {
+module.exports = require("75c5f3ebf4f47667").getBundleURL('dIpmh') + "logo-palette-picker.28417005.svg" + "?" + Date.now();
+
+},{"75c5f3ebf4f47667":"lgJ39"}],"9tYyJ":[function(require,module,exports,__globalThis) {
 module.exports = require("375eb530f34bf4d5").getBundleURL('dIpmh') + "logo-link-checker.2a42671a.svg" + "?" + Date.now();
 
 },{"375eb530f34bf4d5":"lgJ39"}],"1FQ22":[function(require,module,exports,__globalThis) {
 module.exports = require("c6d0c39dc38a386f").getBundleURL('dIpmh') + "logo-dom-snapshot.f2d4e009.svg" + "?" + Date.now();
 
-},{"c6d0c39dc38a386f":"lgJ39"}],"gEZ1R":[function(require,module,exports,__globalThis) {
-module.exports = require("75c5f3ebf4f47667").getBundleURL('dIpmh') + "logo-palette-picker.28417005.svg" + "?" + Date.now();
-
-},{"75c5f3ebf4f47667":"lgJ39"}],"2tcTU":[function(require,module,exports,__globalThis) {
-module.exports = require("27e33fbe1386aa62").getBundleURL('dIpmh') + "logo-viewport-buddy.fae7c0e8.svg" + "?" + Date.now();
-
-},{"27e33fbe1386aa62":"lgJ39"}],"j64Zk":[function(require,module,exports,__globalThis) {
+},{"c6d0c39dc38a386f":"lgJ39"}],"j64Zk":[function(require,module,exports,__globalThis) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 var _view = require("./view");
@@ -1017,6 +1028,8 @@ var _logoDomSnapshotSvg = require("url:../assets/images/logo-dom-snapshot.svg");
 var _logoDomSnapshotSvgDefault = parcelHelpers.interopDefault(_logoDomSnapshotSvg);
 var _logoConsolePlusSvg = require("url:../assets/images/logo-console-plus.svg");
 var _logoConsolePlusSvgDefault = parcelHelpers.interopDefault(_logoConsolePlusSvg);
+var _colorThemeView = require("./colorThemeView");
+var _colorThemeViewDefault = parcelHelpers.interopDefault(_colorThemeView);
 class ActiveView extends (0, _viewDefault.default) {
     _activeBtn = document.querySelector('.activeBtn');
     _parentEl = document.querySelector('.card-container');
@@ -1034,10 +1047,14 @@ class ActiveView extends (0, _viewDefault.default) {
         (0, _logoDomSnapshotSvgDefault.default),
         (0, _logoConsolePlusSvgDefault.default)
     ];
+    _containerEl = document.querySelector('.container');
     addHandlerRenderActivePlugins(handler) {
         this._activeBtn.addEventListener('click', (e)=>{
             this._clear();
             this._addActiveClass(this._activeBtn);
+            console.log((0, _colorThemeViewDefault.default)._moonClicked);
+            (0, _colorThemeViewDefault.default).changeToSunColor();
+            if ((0, _colorThemeViewDefault.default)._moonClicked) (0, _colorThemeViewDefault.default).changeToSunColor();
             handler();
         });
     }
@@ -1060,7 +1077,7 @@ class ActiveView extends (0, _viewDefault.default) {
         </div>
         </div>
         <div class="lower-section">
-          <a href="" class="button remove ${data.name.replace(' ', "")}">Remove</a>
+        <button class="button remove ${data.name.replace(' ', "")}">Remove</button>
           <div class="toggle">
             <input type="radio" name="${data.name}"  id="inactive" value="inactive" class="state">
             <input type="radio" name="${data.name}" id="active" value="active" class="state" ${data.isActive ? 'checked' : ''}>
@@ -1073,7 +1090,82 @@ class ActiveView extends (0, _viewDefault.default) {
 }
 exports.default = new ActiveView();
 
-},{"./view":"2pwRh","./allExtensionsView":"g3M6f","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","url:../assets/images/logo-devlens.svg":"grKFi","url:../assets/images/logo-style-spy.svg":"j48yO","url:../assets/images/logo-speed-boost.svg":"dOqtc","url:../assets/images/logo-json-wizard.svg":"id1Ll","url:../assets/images/logo-tab-master-pro.svg":"6oWYJ","url:../assets/images/logo-viewport-buddy.svg":"2tcTU","url:../assets/images/logo-markup-notes.svg":"hSvAl","url:../assets/images/logo-grid-guides.svg":"8H9n1","url:../assets/images/logo-palette-picker.svg":"gEZ1R","url:../assets/images/logo-link-checker.svg":"9tYyJ","url:../assets/images/logo-dom-snapshot.svg":"1FQ22","url:../assets/images/logo-console-plus.svg":"2NTy0"}],"fHJUO":[function(require,module,exports,__globalThis) {
+},{"./view":"2pwRh","./allExtensionsView":"g3M6f","url:../assets/images/logo-devlens.svg":"grKFi","url:../assets/images/logo-style-spy.svg":"j48yO","url:../assets/images/logo-speed-boost.svg":"dOqtc","url:../assets/images/logo-json-wizard.svg":"id1Ll","url:../assets/images/logo-tab-master-pro.svg":"6oWYJ","url:../assets/images/logo-viewport-buddy.svg":"2tcTU","url:../assets/images/logo-markup-notes.svg":"hSvAl","url:../assets/images/logo-grid-guides.svg":"8H9n1","url:../assets/images/logo-palette-picker.svg":"gEZ1R","url:../assets/images/logo-link-checker.svg":"9tYyJ","url:../assets/images/logo-dom-snapshot.svg":"1FQ22","url:../assets/images/logo-console-plus.svg":"2NTy0","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","./colorThemeView":"9Xiu4"}],"9Xiu4":[function(require,module,exports,__globalThis) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+var _view = require("./view");
+var _viewDefault = parcelHelpers.interopDefault(_view);
+var _iconMoonSvg = require("url:../assets/images/icon-moon.svg");
+var _iconMoonSvgDefault = parcelHelpers.interopDefault(_iconMoonSvg);
+var _allExtensionsView = require("./allExtensionsView");
+var _allExtensionsViewDefault = parcelHelpers.interopDefault(_allExtensionsView);
+var _activeView = require("./activeView");
+var _activeViewDefault = parcelHelpers.interopDefault(_activeView);
+var _inactiveView = require("./inactiveView");
+var _inactiveViewDefault = parcelHelpers.interopDefault(_inactiveView);
+class ColorTheme extends (0, _viewDefault.default) {
+    _themeEL = document.querySelector(".mode");
+    _containerEl = document.querySelector('.container');
+    _listEl = document.querySelector('.list');
+    _button = document.querySelectorAll('.button');
+    _logoContainer = document.querySelector('.logo-container');
+    _moonClicked = false;
+    addHandlerClickSunEl() {
+        this._themeEL.addEventListener('click', (e)=>{
+            this.changeToSunColor();
+        });
+    }
+    changeToSunColor() {
+        this._moonClicked = true;
+        this._themeEL.src = (0, _iconMoonSvgDefault.default);
+        this._themeEL.classList.add('moon');
+        this._logoContainer.style.backgroundColor = 'hsl(200, 60%, 99%)';
+        this._containerEl.style.background = "linear-gradient(180deg, #EBF2FC 0%, #EEF8F9 100%)";
+        this._listEl.style.color = "hsl(227,75%,14%)";
+        let el = document.querySelector('.moon');
+        el.addEventListener('mouseenter', ()=>{
+            el.style.background = "linear-gradient(180deg, #EBF2FC 0%, #EEF8F9 100%)";
+            el.style.border = '1px solid hsl(3,77%,44%)';
+        });
+        el.addEventListener('mouseleave', ()=>{
+            el.style.border = 'none';
+            el.style.background = "hsl(200, 60%, 99%)";
+        });
+        this._button.forEach((btn)=>{
+            btn.style.backgroundColor = 'hsl(200, 60%, 99%)';
+        });
+        if (this._containerEl.childNodes) {
+            let cards = document.querySelectorAll('.card');
+            let extensionName = document.querySelectorAll('.extensionName');
+            let extensionDes = document.querySelectorAll('.extensionDescription');
+            let removeBtn = document.querySelectorAll('.remove');
+            let allSlider = document.querySelectorAll('.toggle');
+            console.log(cards);
+            cards.forEach((card)=>{
+                card.style.backgroundColor = 'hsl(200, 60%, 99%)';
+            });
+            extensionName.forEach((extension)=>{
+                extension.style.color = 'hsl(227,75%,14%)';
+            });
+            extensionDes.forEach((extension)=>{
+                extension.style.color = 'hsl(227,75%,14%)';
+            });
+            removeBtn.forEach((rBtn)=>{
+                rBtn.style.backgroundColor = 'hsl(200, 60%, 99%)';
+                rBtn.style.color = 'black';
+            });
+            allSlider.forEach((slider)=>{
+                slider.style.backgroundColor = 'hsl(200, 60%, 99%)';
+            });
+        }
+    }
+}
+exports.default = new ColorTheme();
+
+},{"./view":"2pwRh","url:../assets/images/icon-moon.svg":"7Dceu","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","./allExtensionsView":"g3M6f","./activeView":"j64Zk","./inactiveView":"fHJUO"}],"7Dceu":[function(require,module,exports,__globalThis) {
+module.exports = require("7e81099303d0f74f").getBundleURL('dIpmh') + "icon-moon.f1310759.svg" + "?" + Date.now();
+
+},{"7e81099303d0f74f":"lgJ39"}],"fHJUO":[function(require,module,exports,__globalThis) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 var _view = require("./view");
@@ -1133,7 +1225,7 @@ class InActiveView extends (0, _viewDefault.default) {
         </div>
         </div>
         <div class="lower-section">
-          <a href="" class="button remove ${data.name.replace(' ', "")}">Remove</a>
+        <button class="button remove ${data.name.replace(' ', "")}">Remove</button>
           <div class="toggle">
             <input type="radio" name="${data.name}"  id="inactive" value="inactive" class="state">
             <input type="radio" name="${data.name}" id="active" value="active" class="state" ${data.isActive ? 'checked' : ''}>
@@ -1146,7 +1238,7 @@ class InActiveView extends (0, _viewDefault.default) {
 }
 exports.default = new InActiveView();
 
-},{"./view":"2pwRh","./allExtensionsView":"g3M6f","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","url:../assets/images/logo-devlens.svg":"grKFi","url:../assets/images/logo-style-spy.svg":"j48yO","url:../assets/images/logo-speed-boost.svg":"dOqtc","url:../assets/images/logo-json-wizard.svg":"id1Ll","url:../assets/images/logo-tab-master-pro.svg":"6oWYJ","url:../assets/images/logo-viewport-buddy.svg":"2tcTU","url:../assets/images/logo-markup-notes.svg":"hSvAl","url:../assets/images/logo-grid-guides.svg":"8H9n1","url:../assets/images/logo-palette-picker.svg":"gEZ1R","url:../assets/images/logo-link-checker.svg":"9tYyJ","url:../assets/images/logo-dom-snapshot.svg":"1FQ22","url:../assets/images/logo-console-plus.svg":"2NTy0"}],"6Pv8V":[function(require,module,exports,__globalThis) {
+},{"./view":"2pwRh","./allExtensionsView":"g3M6f","url:../assets/images/logo-devlens.svg":"grKFi","url:../assets/images/logo-style-spy.svg":"j48yO","url:../assets/images/logo-speed-boost.svg":"dOqtc","url:../assets/images/logo-json-wizard.svg":"id1Ll","url:../assets/images/logo-tab-master-pro.svg":"6oWYJ","url:../assets/images/logo-viewport-buddy.svg":"2tcTU","url:../assets/images/logo-markup-notes.svg":"hSvAl","url:../assets/images/logo-grid-guides.svg":"8H9n1","url:../assets/images/logo-palette-picker.svg":"gEZ1R","url:../assets/images/logo-link-checker.svg":"9tYyJ","url:../assets/images/logo-dom-snapshot.svg":"1FQ22","url:../assets/images/logo-console-plus.svg":"2NTy0","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"6Pv8V":[function(require,module,exports,__globalThis) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 var _view = require("./view");
@@ -1161,9 +1253,9 @@ class RemoveView extends (0, _viewDefault.default) {
     _parentEl = document.querySelector('.card-container');
     addHandlerRemovePlugin(handler) {
         this._parentEl.addEventListener('click', (e)=>{
-            e.preventDefault();
             if (e.target.classList.contains('remove') && (0, _allExtensionsViewDefault.default)._allPluginBtn.classList.contains('active')) {
                 this._clear();
+                // e.preventDefault();
                 handler(e.target.classList[2], "allsection");
             }
             if (e.target.classList.contains('remove') && (0, _activeViewDefault.default)._activeBtn.classList.contains('active')) {
@@ -1179,6 +1271,6 @@ class RemoveView extends (0, _viewDefault.default) {
 }
 exports.default = new RemoveView();
 
-},{"./view":"2pwRh","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","./allExtensionsView":"g3M6f","./activeView":"j64Zk","./inactiveView":"fHJUO"}]},["d1Tca","i6vpN"], "i6vpN", "parcelRequire94c2")
+},{"./view":"2pwRh","./activeView":"j64Zk","./allExtensionsView":"g3M6f","./inactiveView":"fHJUO","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}]},["d1Tca","i6vpN"], "i6vpN", "parcelRequire94c2")
 
 //# sourceMappingURL=index.3afb2d03.js.map

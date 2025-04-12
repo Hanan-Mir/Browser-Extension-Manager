@@ -3,7 +3,6 @@ import ConsolePlus from "url:../assets/images/logo-console-plus.svg";
 export default class View{
     _data;
     _btns=document.querySelectorAll('.button');
-    _imageAddress=[ConsolePlus,DevLens];
     _imageMap=new Map();
 _render(plugindata){
 this._data=plugindata;
