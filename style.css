@@ -18,7 +18,7 @@ body{
     width: 100%;
     margin: 0;
     padding: 0;
-    height: 100vh;
+    height: 110vh;
 }
 .container{
 max-width: 100%;
@@ -95,7 +95,7 @@ gap: 10px;
     display: flex;
     flex-direction: row;
     align-items: center;
-    justify-content: space-between;
+    justify-content:flex-start;
 }
 .logo{
     margin-right: 6%;
@@ -115,7 +115,8 @@ transition: 0.3s;
 .extensionDescription{
     margin: 4px 0px;
     color: var(--neutral--300);
-    font-size: var(--p-size);
+    font-size: 1.4rem;
+    width: 100%;
 }
 .lower-section{
     width: 100%;
@@ -131,13 +132,16 @@ transition: 0.3s;
     justify-content: space-between;
    
 }
+.toggle:hover{
+    cursor: pointer;
+}
 .state{
     opacity: 0;
   z-index: 2;
 }
 .active{
     /* background-color: var(--red-400); */
-background-color: blue;
+background-color:var(--red-500) !important;
     color: black;
     z-index: 3;
 }
@@ -181,6 +185,42 @@ cursor: pointer;
     background-color: var(--red-700);
     color: black;
 }
+.sun:hover{
+   background-color: grey; 
+}
 .moon:hover{
-background-color: grey;
+    background-color:var(--neutral--300) !important;
+}
+@media only screen and (max-width:400px){
+    .container{
+        min-height: 100vh;
+        overflow: auto;
+    }
+    .logo-container{
+        width: 110%;
+        border-radius: 10px;
+        height: 70%;
+    }
+    .logo-container img:nth-of-type(1){
+        width: 30%;
+    }
+    .card-container{
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin-top: 10px;
+    }
+    .card{
+        width: 120%;
+    }
+    .heading{
+        display: flex;
+        flex-direction: column;
+    }
+    .list{
+        margin: 10px auto;
+    }
+    .states{
+        margin: 0 auto;
+    }
 }

@@ -664,6 +664,7 @@ let init = function() {
     (0, _removeViewJsDefault.default).addHandlerRemovePlugin(removeplugin);
     (0, _allExtensionsViewJsDefault.default).addHandlerTogglePlugins(controlToggle);
     (0, _colorThemeViewJsDefault.default).addHandlerClickSunEl();
+    (0, _colorThemeViewJsDefault.default).addHandlerChangeColor();
 };
 init();
 
@@ -1052,9 +1053,6 @@ class ActiveView extends (0, _viewDefault.default) {
         this._activeBtn.addEventListener('click', (e)=>{
             this._clear();
             this._addActiveClass(this._activeBtn);
-            console.log((0, _colorThemeViewDefault.default)._moonClicked);
-            (0, _colorThemeViewDefault.default).changeToSunColor();
-            if ((0, _colorThemeViewDefault.default)._moonClicked) (0, _colorThemeViewDefault.default).changeToSunColor();
             handler();
         });
     }
@@ -1090,13 +1088,15 @@ class ActiveView extends (0, _viewDefault.default) {
 }
 exports.default = new ActiveView();
 
-},{"./view":"2pwRh","./allExtensionsView":"g3M6f","url:../assets/images/logo-devlens.svg":"grKFi","url:../assets/images/logo-style-spy.svg":"j48yO","url:../assets/images/logo-speed-boost.svg":"dOqtc","url:../assets/images/logo-json-wizard.svg":"id1Ll","url:../assets/images/logo-tab-master-pro.svg":"6oWYJ","url:../assets/images/logo-viewport-buddy.svg":"2tcTU","url:../assets/images/logo-markup-notes.svg":"hSvAl","url:../assets/images/logo-grid-guides.svg":"8H9n1","url:../assets/images/logo-palette-picker.svg":"gEZ1R","url:../assets/images/logo-link-checker.svg":"9tYyJ","url:../assets/images/logo-dom-snapshot.svg":"1FQ22","url:../assets/images/logo-console-plus.svg":"2NTy0","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","./colorThemeView":"9Xiu4"}],"9Xiu4":[function(require,module,exports,__globalThis) {
+},{"./view":"2pwRh","./allExtensionsView":"g3M6f","url:../assets/images/logo-devlens.svg":"grKFi","url:../assets/images/logo-style-spy.svg":"j48yO","url:../assets/images/logo-speed-boost.svg":"dOqtc","url:../assets/images/logo-json-wizard.svg":"id1Ll","url:../assets/images/logo-tab-master-pro.svg":"6oWYJ","url:../assets/images/logo-viewport-buddy.svg":"2tcTU","url:../assets/images/logo-markup-notes.svg":"hSvAl","url:../assets/images/logo-grid-guides.svg":"8H9n1","url:../assets/images/logo-palette-picker.svg":"gEZ1R","url:../assets/images/logo-link-checker.svg":"9tYyJ","url:../assets/images/logo-dom-snapshot.svg":"1FQ22","url:../assets/images/logo-console-plus.svg":"2NTy0","./colorThemeView":"9Xiu4","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"9Xiu4":[function(require,module,exports,__globalThis) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 var _view = require("./view");
 var _viewDefault = parcelHelpers.interopDefault(_view);
 var _iconMoonSvg = require("url:../assets/images/icon-moon.svg");
 var _iconMoonSvgDefault = parcelHelpers.interopDefault(_iconMoonSvg);
+var _iconSunSvg = require("url:../assets/images/icon-sun.svg");
+var _iconSunSvgDefault = parcelHelpers.interopDefault(_iconSunSvg);
 var _allExtensionsView = require("./allExtensionsView");
 var _allExtensionsViewDefault = parcelHelpers.interopDefault(_allExtensionsView);
 var _activeView = require("./activeView");
@@ -1112,35 +1112,43 @@ class ColorTheme extends (0, _viewDefault.default) {
     _moonClicked = false;
     addHandlerClickSunEl() {
         this._themeEL.addEventListener('click', (e)=>{
-            this.changeToSunColor();
+            if (e.target.classList.contains('sun')) {
+                this.changeToSunColor();
+                return;
+            }
+            if (e.target.classList.contains('moon')) {
+                this.addHandlerChangeToMoonColor();
+                return;
+            }
         });
     }
     changeToSunColor() {
         this._moonClicked = true;
         this._themeEL.src = (0, _iconMoonSvgDefault.default);
         this._themeEL.classList.add('moon');
+        this._themeEL.classList.remove('sun');
         this._logoContainer.style.backgroundColor = 'hsl(200, 60%, 99%)';
         this._containerEl.style.background = "linear-gradient(180deg, #EBF2FC 0%, #EEF8F9 100%)";
         this._listEl.style.color = "hsl(227,75%,14%)";
         let el = document.querySelector('.moon');
-        el.addEventListener('mouseenter', ()=>{
-            el.style.background = "linear-gradient(180deg, #EBF2FC 0%, #EEF8F9 100%)";
-            el.style.border = '1px solid hsl(3,77%,44%)';
-        });
-        el.addEventListener('mouseleave', ()=>{
-            el.style.border = 'none';
-            el.style.background = "hsl(200, 60%, 99%)";
-        });
+        // el.addEventListener('mouseenter',()=>{
+        //     el.style.background="linear-gradient(180deg, #EBF2FC 0%, #EEF8F9 100%)"
+        // el.style.border='1px solid hsl(3,77%,44%)';
+        // })
+        // el.addEventListener('mouseleave',()=>{
+        //     el.style.border='none';
+        //     el.style.background="hsl(200, 60%, 99%)";
+        // })
         this._button.forEach((btn)=>{
             btn.style.backgroundColor = 'hsl(200, 60%, 99%)';
         });
         if (this._containerEl.childNodes) {
+            let toggle = document.querySelectorAll('.toggle');
             let cards = document.querySelectorAll('.card');
             let extensionName = document.querySelectorAll('.extensionName');
             let extensionDes = document.querySelectorAll('.extensionDescription');
             let removeBtn = document.querySelectorAll('.remove');
-            let allSlider = document.querySelectorAll('.toggle');
-            console.log(cards);
+            // let allSlider=document.querySelectorAll('.toggle');   
             cards.forEach((card)=>{
                 card.style.backgroundColor = 'hsl(200, 60%, 99%)';
             });
@@ -1153,16 +1161,72 @@ class ColorTheme extends (0, _viewDefault.default) {
             removeBtn.forEach((rBtn)=>{
                 rBtn.style.backgroundColor = 'hsl(200, 60%, 99%)';
                 rBtn.style.color = 'black';
+                rBtn.addEventListener('mouseenter', ()=>{
+                    rBtn.style.backgroundColor = 'hsl(3,77%,44%)';
+                    rBtn.style.cursor = 'pointer';
+                });
+                rBtn.addEventListener('mouseleave', ()=>{
+                    rBtn.style.backgroundColor = 'hsl(200, 60%, 99%)';
+                });
             });
-            allSlider.forEach((slider)=>{
-                slider.style.backgroundColor = 'hsl(200, 60%, 99%)';
+            toggle.forEach((toggle)=>{
+                toggle.style.cursor = 'pointer';
             });
+        // allSlider.forEach(slider=>{
+        //     slider.style.backgroundColor='hsl(200, 60%, 99%)';
+        // })
+        }
+    }
+    addHandlerChangeColor() {
+        this._button.forEach((btn)=>{
+            btn.addEventListener('click', (e)=>{
+                if (this._moonClicked) this.changeToSunColor();
+            });
+        });
+    }
+    addHandlerChangeToMoonColor() {
+        this._themeEL.classList.remove('moon');
+        this._moonClicked = false;
+        this._themeEL.classList.add('sun');
+        this._themeEL.src = (0, _iconSunSvgDefault.default);
+        this._containerEl.style.background = 'linear-gradient(180deg, #040918 0%, #091540 100%)';
+        this._logoContainer.style.backgroundColor = 'var(--neutral--700)';
+        this._button.forEach((btn)=>{
+            btn.style.backgroundColor = 'hsl(226,25%,17%)';
+        });
+        if (this._containerEl.childNodes) {
+            let cardContainer = document.querySelector('.card-container');
+            let cards = document.querySelectorAll('.card');
+            let extensionName = document.querySelectorAll('.extensionName');
+            let extensionDes = document.querySelectorAll('.extensionDescription');
+            let removeBtn = document.querySelectorAll('.remove');
+            cards.forEach((card)=>{
+                card.style.backgroundColor = 'hsl(226,25%,17%)';
+            });
+            extensionName.forEach((extension)=>{
+                extension.style.color = 'hsl(200, 60%, 99%)';
+            });
+            extensionDes.forEach((extension)=>{
+                extension.style.color = 'hsl(0, 0%, 78%)';
+            });
+            removeBtn.forEach((rBtn)=>{
+                rBtn.style.backgroundColor = 'hsl(226,25%,17%)';
+                rBtn.style.color = 'hsl(0, 0%, 93%)';
+                rBtn.style.border = '1px solid hsl(0, 0%, 93%)';
+                rBtn.addEventListener('mouseleave', ()=>{
+                    rBtn.style.backgroundColor = 'hsl(226,25%,17%)';
+                });
+            });
+            // allSlider.forEach(slider=>{
+            //     slider.style.backgroundColor='hsl(200, 60%, 99%)';
+            // })
+            this._listEl.style.color = "hsl(0, 0%, 93%)";
         }
     }
 }
 exports.default = new ColorTheme();
 
-},{"./view":"2pwRh","url:../assets/images/icon-moon.svg":"7Dceu","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","./allExtensionsView":"g3M6f","./activeView":"j64Zk","./inactiveView":"fHJUO"}],"7Dceu":[function(require,module,exports,__globalThis) {
+},{"./view":"2pwRh","url:../assets/images/icon-moon.svg":"7Dceu","./allExtensionsView":"g3M6f","./activeView":"j64Zk","./inactiveView":"fHJUO","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","url:../assets/images/icon-sun.svg":"aRM6l"}],"7Dceu":[function(require,module,exports,__globalThis) {
 module.exports = require("7e81099303d0f74f").getBundleURL('dIpmh') + "icon-moon.f1310759.svg" + "?" + Date.now();
 
 },{"7e81099303d0f74f":"lgJ39"}],"fHJUO":[function(require,module,exports,__globalThis) {
@@ -1238,7 +1302,10 @@ class InActiveView extends (0, _viewDefault.default) {
 }
 exports.default = new InActiveView();
 
-},{"./view":"2pwRh","./allExtensionsView":"g3M6f","url:../assets/images/logo-devlens.svg":"grKFi","url:../assets/images/logo-style-spy.svg":"j48yO","url:../assets/images/logo-speed-boost.svg":"dOqtc","url:../assets/images/logo-json-wizard.svg":"id1Ll","url:../assets/images/logo-tab-master-pro.svg":"6oWYJ","url:../assets/images/logo-viewport-buddy.svg":"2tcTU","url:../assets/images/logo-markup-notes.svg":"hSvAl","url:../assets/images/logo-grid-guides.svg":"8H9n1","url:../assets/images/logo-palette-picker.svg":"gEZ1R","url:../assets/images/logo-link-checker.svg":"9tYyJ","url:../assets/images/logo-dom-snapshot.svg":"1FQ22","url:../assets/images/logo-console-plus.svg":"2NTy0","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"6Pv8V":[function(require,module,exports,__globalThis) {
+},{"./view":"2pwRh","./allExtensionsView":"g3M6f","url:../assets/images/logo-devlens.svg":"grKFi","url:../assets/images/logo-style-spy.svg":"j48yO","url:../assets/images/logo-speed-boost.svg":"dOqtc","url:../assets/images/logo-json-wizard.svg":"id1Ll","url:../assets/images/logo-tab-master-pro.svg":"6oWYJ","url:../assets/images/logo-viewport-buddy.svg":"2tcTU","url:../assets/images/logo-markup-notes.svg":"hSvAl","url:../assets/images/logo-grid-guides.svg":"8H9n1","url:../assets/images/logo-palette-picker.svg":"gEZ1R","url:../assets/images/logo-link-checker.svg":"9tYyJ","url:../assets/images/logo-dom-snapshot.svg":"1FQ22","url:../assets/images/logo-console-plus.svg":"2NTy0","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"aRM6l":[function(require,module,exports,__globalThis) {
+module.exports = require("e6376f6d501f578e").getBundleURL('dIpmh') + "icon-sun.b15a5965.svg" + "?" + Date.now();
+
+},{"e6376f6d501f578e":"lgJ39"}],"6Pv8V":[function(require,module,exports,__globalThis) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 var _view = require("./view");
@@ -1249,6 +1316,8 @@ var _allExtensionsView = require("./allExtensionsView");
 var _allExtensionsViewDefault = parcelHelpers.interopDefault(_allExtensionsView);
 var _inactiveView = require("./inactiveView");
 var _inactiveViewDefault = parcelHelpers.interopDefault(_inactiveView);
+var _colorThemeView = require("./colorThemeView");
+var _colorThemeViewDefault = parcelHelpers.interopDefault(_colorThemeView);
 class RemoveView extends (0, _viewDefault.default) {
     _parentEl = document.querySelector('.card-container');
     addHandlerRemovePlugin(handler) {
@@ -1257,20 +1326,35 @@ class RemoveView extends (0, _viewDefault.default) {
                 this._clear();
                 // e.preventDefault();
                 handler(e.target.classList[2], "allsection");
+                if ((0, _colorThemeViewDefault.default)._moonClicked) {
+                    this._clear();
+                    handler(e.target.classList[2], "allsection");
+                    (0, _colorThemeViewDefault.default).changeToSunColor();
+                }
             }
             if (e.target.classList.contains('remove') && (0, _activeViewDefault.default)._activeBtn.classList.contains('active')) {
                 this._clear();
                 handler(e.target.classList[2], "activesection");
+                if ((0, _colorThemeViewDefault.default)._moonClicked) {
+                    this._clear();
+                    handler(e.target.classList[2], "activesection");
+                    (0, _colorThemeViewDefault.default).changeToSunColor();
+                }
             }
             if (e.target.classList.contains('remove') && (0, _inactiveViewDefault.default)._inactiveBtn.classList.contains('active')) {
                 this._clear();
                 handler(e.target.classList[2], "inactivesection");
+                if ((0, _colorThemeViewDefault.default)._moonClicked) {
+                    this._clear();
+                    handler(e.target.classList[2], "inactivesection");
+                    (0, _colorThemeViewDefault.default).changeToSunColor();
+                }
             }
         });
     }
 }
 exports.default = new RemoveView();
 
-},{"./view":"2pwRh","./activeView":"j64Zk","./allExtensionsView":"g3M6f","./inactiveView":"fHJUO","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}]},["d1Tca","i6vpN"], "i6vpN", "parcelRequire94c2")
+},{"./view":"2pwRh","./activeView":"j64Zk","./allExtensionsView":"g3M6f","./inactiveView":"fHJUO","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","./colorThemeView":"9Xiu4"}]},["d1Tca","i6vpN"], "i6vpN", "parcelRequire94c2")
 
 //# sourceMappingURL=index.3afb2d03.js.map

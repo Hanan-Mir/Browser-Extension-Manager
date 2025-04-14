@@ -22,11 +22,6 @@ addHandlerRenderActivePlugins(handler){
     this._activeBtn.addEventListener('click',(e)=>{
         this._clear();
         this._addActiveClass(this._activeBtn);
-        console.log(colorThemeView._moonClicked);
-        colorThemeView.changeToSunColor();
-        if(colorThemeView._moonClicked){
-          colorThemeView.changeToSunColor();
-        }
         handler();
     })
 }

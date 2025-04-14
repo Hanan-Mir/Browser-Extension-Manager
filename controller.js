@@ -79,5 +79,6 @@ let init=function(){
     removeView.addHandlerRemovePlugin(removeplugin);
     allExtensionsView.addHandlerTogglePlugins(controlToggle);
     colorThemeView.addHandlerClickSunEl();
+    colorThemeView.addHandlerChangeColor();
 }
 init();
